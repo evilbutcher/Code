@@ -1,3 +1,5 @@
+[![Anurag's github stats](https://github-readme-stats.vercel.app/api?username=evilbutcher)](https://github.com/anuraghazra/github-readme-stats)
+
 # 个人脚本整理
 ⚠️所有内容仅供交流学习，请于下载后24h内删除，勿挪作他用，否则后果自负⚠️  
 ⚠️一旦下载即视为您同意上述要求⚠️
