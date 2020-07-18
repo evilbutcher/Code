@@ -5,7 +5,7 @@
 ⚠️一旦下载即视为您同意上述要求⚠️
 ## 【JSBox】
 ### [文献下载助手](https://github.com/evilbutcher/Code/tree/master/%E6%96%87%E7%8C%AE%E4%B8%8B%E8%BD%BD/%E6%96%87%E7%8C%AE%E4%B8%8B%E8%BD%BD%E5%8A%A9%E6%89%8B5.1)
-##### 功能特点
+#### 功能特点
 1、输入doi号(默认复制剪贴板文本)，点击“下载”按钮即可下载文献；可批量下载，doi用英文逗号(,)隔开。  
 2、长按地址栏可检测链接是否可用。  
 3、若提示错误，长按对应的链接尝试手动下载。  
@@ -16,21 +16,21 @@
 8、Windows用户可在Microsoft Store下载iCloud进行同步。  
 
 ### [缩写翻译](https://github.com/evilbutcher/Code/blob/master/%E7%BC%A9%E5%86%99%E7%BF%BB%E8%AF%91/1.2%E7%BC%A9%E5%86%99%E7%BF%BB%E8%AF%91%E8%BE%93%E5%85%A5%E7%B2%98%E8%B4%B4%E5%B9%B6%E5%AD%98.js)
-##### 功能特点
+#### 功能特点
 复制带有缩写的文字运行脚本即可。
 
 ### [下载INS图片](https://github.com/evilbutcher/Code/blob/master/%E4%B8%8B%E8%BD%BDINS%E5%9B%BE%E7%89%87.js)
-##### 功能特点
+#### 功能特点
 需要自行填入cookie。  
 其他方式：[大佬的捷径](https://www.icloud.com/shortcuts/3b6e85cd3f114ac79baf056765127dae)。
 
 ### [去重小工具](https://github.com/evilbutcher/Code/blob/master/%E5%8E%BB%E9%87%8D%E5%B7%A5%E5%85%B7.js)
-##### 功能特点
+#### 功能特点
 以英文,分隔，去除重复（可根据情况改）。
 
 ## 【网页】
 ### [神秘博士2048](https://github.com/evilbutcher/Code/tree/master/MyWeb/custome%202048)
-##### 功能特点
+#### 功能特点
 打开index.html即可玩，picture内图片可自定义。  
 
 ### 免责声明
