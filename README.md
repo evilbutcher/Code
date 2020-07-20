@@ -5,7 +5,7 @@
 ⚠️一旦下载即视为您同意上述要求⚠️
 ## 【JSBox】
 ### [文献下载助手](https://github.com/evilbutcher/Code/tree/master/%E6%96%87%E7%8C%AE%E4%B8%8B%E8%BD%BD/%E6%96%87%E7%8C%AE%E4%B8%8B%E8%BD%BD%E5%8A%A9%E6%89%8B)
-#### [安装链接](https://github.com/evilbutcher/Code/raw/master/%E6%96%87%E7%8C%AE%E4%B8%8B%E8%BD%BD/%E6%96%87%E7%8C%AE%E4%B8%8B%E8%BD%BD%E5%8A%A9%E6%89%8B.box)
+#### [安装链接](https://xteko.com/redir?name=ArticlesHelper&url=https%3A%2F%2Fgithub.com%2Fevilbutcher%2FCode%2Fraw%2Fmaster%2F%25E6%2596%2587%25E7%258C%25AE%25E4%25B8%258B%25E8%25BD%25BD%2FArticlesHelper.box)
 #### 功能特点
 1、输入doi号(默认复制剪贴板文本)，点击“下载”按钮即可下载文献；可批量下载，doi用英文逗号(,)隔开。  
 2、长按地址栏可检测链接是否可用。  
