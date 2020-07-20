@@ -4,7 +4,7 @@
 ⚠️所有内容仅供交流学习，请于下载后24h内删除，勿挪作他用，否则后果自负⚠️  
 ⚠️一旦下载即视为您同意上述要求⚠️
 ## 【JSBox】
-### [文献下载助手](https://github.com/evilbutcher/Code/tree/master/%E6%96%87%E7%8C%AE%E4%B8%8B%E8%BD%BD/%E6%96%87%E7%8C%AE%E4%B8%8B%E8%BD%BD%E5%8A%A9%E6%89%8B5.1)
+### [文献下载助手](https://github.com/evilbutcher/Code/tree/master/%E6%96%87%E7%8C%AE%E4%B8%8B%E8%BD%BD/%E6%96%87%E7%8C%AE%E4%B8%8B%E8%BD%BD%E5%8A%A9%E6%89%8B)
 #### 功能特点
 1、输入doi号(默认复制剪贴板文本)，点击“下载”按钮即可下载文献；可批量下载，doi用英文逗号(,)隔开。  
 2、长按地址栏可检测链接是否可用。  
