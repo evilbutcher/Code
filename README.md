@@ -16,6 +16,25 @@
 7、iCloud中的ArticlesHelper/download目录用来存储wos下载的html记录。具体方法：Safari下载html格式的wos文献记录，下载完成后打开目录，转存至ArticlesHelper/download文件夹，打开脚本，通过载入文件解析doi，若有多篇文献记录默认载入最后一个文件的doi。所有文献记录以txt格式保存在ArticlesHelper/articles目录下，可通过文献界面下拉刷新对解析记录进行管理。  
 8、Windows用户可在Microsoft Store下载iCloud进行同步。  
 
+### [热门监控](https://github.com/evilbutcher/Code/tree/master/%E7%83%AD%E9%97%A8%E7%9B%91%E6%8E%A7)
+#### 功能特点
+1、可以选择性监控榜单。  
+2、可以分别设定每个榜单的最热内容数量。  
+3、可以选择是否附带话题链接。  
+4、可以自定每个榜单是匹配关键词还是获取最新内容。  
+5、可以自定每个榜单内容独立推送还是合并推送。  
+6、一些榜单单独推送时支持封面。   
+7、支持BoxJs。  
+8、监控微博热搜关键词。  
+9、监控知乎热榜关键词。  
+10、监控百度风云榜关键词。  
+11、监控B站日榜关键词（对应关系：0全站，1动画，3音乐，4游戏，5娱乐，36科技，119鬼畜，129舞蹈）。  
+12、监控豆瓣电影关键词。  
+13、监控抖音视频关键词。  
+14、监控36氪关键词。  
+15、监控Kindle图书关键词。  
+16、监控RSSHub订阅。  
+
 ### [缩写翻译](https://github.com/evilbutcher/Code/blob/master/%E7%BC%A9%E5%86%99%E7%BF%BB%E8%AF%91/1.2%E7%BC%A9%E5%86%99%E7%BF%BB%E8%AF%91%E8%BE%93%E5%85%A5%E7%B2%98%E8%B4%B4%E5%B9%B6%E5%AD%98.js)
 #### 功能特点
 复制带有缩写的文字运行脚本即可。
