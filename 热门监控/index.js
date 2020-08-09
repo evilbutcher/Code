@@ -1,14 +1,28 @@
 /*
 
 【热门监控】@evilbutcher
+
 【仓库地址】https://github.com/evilbutcher/Quantumult_X/tree/master（欢迎star🌟）
 
+【BoxJs】https://raw.githubusercontent.com/evilbutcher/Quantumult_X/master/evilbutcher.boxjs.json
+
 【致谢】
-@南叔、@mini计划-图标聚合、@zZPiglet
+本脚本使用了Chavy的Env.js，感谢！
+@南叔、@mini计划-图标聚合、@zZPiglet、@xinian
+
+⚠️【免责声明】
+------------------------------------------
+1、此脚本仅用于学习研究，不保证其合法性、准确性、有效性，请根据情况自行判断，本人对此不承担任何保证责任。
+2、由于此脚本仅用于学习研究，您必须在下载后 24 小时内将所有内容从您的计算机或手机或任何存储设备中完全删除，若违反规定引起任何事件本人对此均不负责。
+3、请勿将此脚本用于任何商业或非法目的，若违反规定请自行对此负责。
+4、此脚本涉及应用与本人无关，本人对因此引起的任何隐私泄漏或其他后果不承担任何责任。
+5、本人对任何脚本引发的问题概不负责，包括但不限于由脚本错误引起的任何损失和损害。
+6、如果任何单位或个人认为此脚本可能涉嫌侵犯其权利，应及时通知并提供身份证明，所有权证明，我们将在收到认证文件确认后删除此脚本。
+7、所有直接或间接使用、查看此脚本的人均应该仔细阅读此声明。本人保留随时更改或补充此声明的权利。一旦您使用或复制了此脚本，即视为您已接受此免责声明。
 
 ⚠️【使用方法】请仔细阅读⚠️
 ------------------------------------------
-1、按照客户端配置好task，支持监控微博热搜、知乎热榜、百度风云榜、B站日榜、豆瓣榜单、抖音榜单、36氪、Kindle图书、rss订阅
+1、按照客户端配置好task，支持监控微博热搜、知乎热榜、百度风云榜、B站日榜、豆瓣榜单、抖音榜单、36氪、Kindle图书、rss订阅、人人影视最新美剧资源
 2、不再需要获取Cookie，无用Cookie会自动清除；B站榜单对应关系：0全站，1动画，3音乐，4游戏，5娱乐，36科技，119鬼畜，129舞蹈。
 3、本地直接修改关键词，远程可通过BoxJs修改关键词，有关键词更新时会通知，否则不通知。
 4、可选择是否合并同一榜单的全部通知。
@@ -21,12 +35,10 @@
 
 本地脚本keyword设置关键词，注意是英文逗号；BoxJs是用中文逗号。
 
-【BoxJs】订阅链接
+⚠️【BoxJs】设置注意事项⚠️
 ------------------------------------------
-https://raw.githubusercontent.com/evilbutcher/Quantumult_X/master/evilbutcher.boxjs.json
 订阅后，可以在BoxJs里面修改关键词，设置清除Cookie、开启对应榜单等。
 
-⚠️BoxJs设置注意事项⚠️
 #微博热搜检测数量设置：建议最大为8，设置检测数量太多显示不完全，内容过多。其他榜单最大检测数量暂无建议，自行决定即可。
 
 #关键词：对所有榜单生效，榜单内无关键词匹配不会通知。
@@ -54,9 +66,10 @@ cron "30 0 8-22/2 * * *" script-path=https://raw.githubusercontent.com/evilbutch
 */
 
 const $ = new Env("热门监控");
+const base64 = new Base64Code();
 
 //⚠️本地自定参数修改位置⚠️
-var keyword = ["万茜"]; //👈本地脚本关键词在这里设置。
+var keyword = ["万茜","精灵旅社"]; //👈本地脚本关键词在这里设置。
 var rsslink = ["https://rsshub.app/bilibili/user/video/2267573"]; //👈本地rss订阅设置
 //⚠️👆以上用英文逗号、英文双引号⚠️
 $.weibo = true; //是否开启相应榜单监控
@@ -77,8 +90,10 @@ $.amazon = true; //是否开启相应榜单监控
 $.amznum = 6; //自定Kindle图书榜单数量
 $.rss = true; //是否开启相应榜单监控
 $.rssnum = 6; //自定rss订阅推送数量
+$.zmz = true; //是否开启相应榜单监控
+$.zmznum = 6; //自定人人影视推送数量
 $.splitpushwb = false; //是否分开推送微博榜单
-$.pushnewwb = true; //是否忽略关键词推送微博最新内容
+$.pushnewwb = false; //是否忽略关键词推送微博最新内容
 $.splitpushzh = false; //是否分开推送知乎榜单
 $.pushnewzh = false; //是否忽略关键词推送知乎最新内容
 $.splitpushbd = false; //是否分开推送百度榜单
@@ -95,9 +110,12 @@ $.splitpushamz = false; //是否分开推送Kindle图书榜单
 $.pushnewamz = false; //是否忽略关键词推送Kindle图书最新内容
 $.splitpushrss = false; //是否分开推送rss内容
 $.pushnewrss = false; //是否忽略关键词推送rss最新内容
+$.splitpushzmz = false; //是否分开推送人人影视内容
+$.pushnewzmz = false; //是否忽略关键词推送人人影视最新内容
 $.attachurl = false; //通知是否附带跳转链接
+$.refreshtime = 6; //重复内容默认在6小时内不再通知，之后清空，可自行修改
 $.rid = 0; //更改B站监控榜单
-$.time = 2000; //榜单获取时限，单位毫秒
+$.time = 2; //榜单获取时限，单位秒
 //⚠️本地自定参数修改位置⚠️
 
 var itemswb = [];
@@ -109,6 +127,7 @@ var itemsdy = [];
 var itemsk36 = [];
 var itemsamz = [];
 var itemsrss = [];
+var itemszmz = [];
 var urlswb = [];
 var urlszh = [];
 var urlsbd = [];
@@ -118,6 +137,7 @@ var urlsdy = [];
 var urlsk36 = [];
 var urlsamz = [];
 var urlsrss = [];
+var urlszmz = [];
 var coversbl = [];
 var coversdb = [];
 var coversamz = [];
@@ -131,6 +151,7 @@ var resultdy = [];
 var resultk36 = [];
 var resultamz = [];
 var resultrss = [];
+var resultzmz = [];
 var openurlwb = [];
 var openurlzh = [];
 var openurlbd = [];
@@ -140,13 +161,19 @@ var openurldy = [];
 var openurlk36 = [];
 var openurlamz = [];
 var openurlrss = [];
+var openurlzmz = [];
 var mediaurlbl = [];
 var mediaurldb = [];
 var mediaurlamz = [];
 var mediaurlrss = [];
 var titlerss = [];
+var saveditem = [];
 
 !(async () => {
+  /*if (typeof $request != "undefined") {
+    getCookie();
+    return;
+  }*/
   getsetting();
   if (havekeyword() == true) {
     if ($.weibo == true) {
@@ -159,7 +186,7 @@ var titlerss = [];
         }
       }
     } else {
-      console.log("微博热搜未获取😫");
+      $.log("微博热搜未获取😫");
     }
     if ($.zhihu == true) {
       await gethotlist();
@@ -171,7 +198,7 @@ var titlerss = [];
         }
       }
     } else {
-      console.log("知乎热榜未获取😫");
+      $.log("知乎热榜未获取😫");
     }
     if ($.baidu == true) {
       await getfylist();
@@ -183,7 +210,7 @@ var titlerss = [];
         }
       }
     } else {
-      console.log("百度风云榜未获取😫");
+      $.log("百度风云榜未获取😫");
     }
     if ($.bilibili == true) {
       await getbllist();
@@ -195,7 +222,7 @@ var titlerss = [];
         }
       }
     } else {
-      console.log("B站日榜未获取😫");
+      $.log("B站日榜未获取😫");
     }
     if ($.douban == true) {
       await getdblist();
@@ -207,7 +234,7 @@ var titlerss = [];
         }
       }
     } else {
-      console.log("豆瓣榜单未获取😫");
+      $.log("豆瓣榜单未获取😫");
     }
     if ($.douyin == true) {
       await getdylist();
@@ -219,7 +246,7 @@ var titlerss = [];
         }
       }
     } else {
-      console.log("抖音榜单未获取😫");
+      $.log("抖音榜单未获取😫");
     }
     if ($.k36 == true) {
       await getk36list();
@@ -231,7 +258,7 @@ var titlerss = [];
         }
       }
     } else {
-      console.log("36氪榜单未获取😫");
+      $.log("36氪榜单未获取😫");
     }
     if ($.amazon == true) {
       await getamazonlist();
@@ -243,7 +270,19 @@ var titlerss = [];
         }
       }
     } else {
-      console.log("Kindle图书榜单未获取😫");
+      $.log("Kindle图书榜单未获取😫");
+    }
+    if ($.zmz == true) {
+      await getzmzlist();
+      if (resultzmz.length != 0) {
+        if ($.splitpushzmz == true) {
+          splitpushnotify(resultzmz, openurlzmz);
+        } else {
+          mergepushnotify(resultzmz);
+        }
+      }
+    } else {
+      $.log("人人影视榜单未获取😫");
     }
     if ($.rss == true) {
       if (haversslink()) {
@@ -275,14 +314,15 @@ var titlerss = [];
         }
       }
     } else {
-      console.log("rss订阅未获取😫");
+      $.log("rss订阅未获取😫");
     }
     last();
     final();
+    //deluselessck();
   }
 })()
   .catch(e => {
-    console.log("", `❌失败! 原因: ${e}!`, "");
+    $.log("", `❌失败! 原因: ${e}!`, "");
   })
   .finally(() => {
     $.done();
@@ -327,50 +367,154 @@ function haversslink() {
 }
 
 function getsetting() {
-  console.log("初始化，开始！");
-  console.log("监控关键词 " + keyword);
-  console.log("监控rss链接 " + rsslink);
-  console.log("获取rss订阅 " + $.rss);
-  console.log("分开推送rss内容 " + $.splitpushrss);
-  console.log("忽略关键词获取rss最新内容 " + $.pushnewrss);
-  console.log("获取rss数量 " + $.rssnum + "个");
-  console.log("获取微博热搜 " + $.weibo);
-  console.log("分开推送微博内容 " + $.splitpushwb);
-  console.log("忽略关键词获取微博最热内容 " + $.pushnewwb);
-  console.log("获取微博热搜数量 " + $.wbnum + "个");
-  console.log("获取知乎热榜 " + $.zhihu);
-  console.log("分开推送知乎内容 " + $.splitpushzh);
-  console.log("忽略关键词获取知乎最热内容 " + $.pushnewzh);
-  console.log("获取知乎热榜数量 " + $.zhnum + "个");
-  console.log("获取百度风云榜 " + $.baidu);
-  console.log("分开推送百度内容 " + $.splitpushbd);
-  console.log("忽略关键词获取百度最热内容 " + $.pushnewbd);
-  console.log("获取百度风云榜数量 " + $.bdnum + "个");
-  console.log("获取B站榜单 " + $.bilibili);
-  console.log("分开推送B站内容 " + $.splitpushbl);
-  console.log("忽略关键词获取B站最热内容 " + $.pushnewbl);
-  console.log("获取B站日榜数量 " + $.blnum + "个");
-  console.log("获取豆瓣榜单 " + $.douban);
-  console.log("分开推送豆瓣内容 " + $.splitpushdb);
-  console.log("忽略关键词获取豆瓣最热内容 " + $.pushnewdb);
-  console.log("获取豆瓣榜单数量 " + $.dbnum + "个");
-  console.log("获取抖音榜单 " + $.douyin);
-  console.log("分开推送抖音内容 " + $.splitpushdy);
-  console.log("忽略关键词获取抖音最热内容 " + $.pushnewdy);
-  console.log("获取抖音榜单数量 " + $.dynum + "个");
-  console.log("获取36氪榜单 " + $.k36);
-  console.log("分开推送36氪内容 " + $.splitpushk36);
-  console.log("忽略关键词获取36氪最热内容 " + $.pushnewk36);
-  console.log("获取36氪榜单数量 " + $.k36num + "个");
-  console.log("获取Kindle图书榜单 " + $.amazon);
-  console.log("分开推送Kindle图书内容 " + $.splitpushamz);
-  console.log("忽略关键词获取Kindle图书最热内容 " + $.pushnewamz);
-  console.log("获取Kindle图书榜单数量 " + $.amznum + "个");
-  console.log("附带跳转链接 " + $.attachurl + "\n");
+  $.log("初始化！");
+  if (
+    $.getdata("evil_savedtime") != undefined &&
+    $.getdata("evil_savedtime") != ""
+  ) {
+    $.savedtime = $.getdata("evil_savedtime");
+    $.nowtime = new Date().getTime();
+  } else {
+    $.savedtime = new Date().getTime();
+    $.nowtime = new Date().getTime();
+    $.setdata(JSON.stringify($.nowtime), "evil_savedtime");
+    $.setdata("[]", "evil_saveditem");
+  }
+  $.refreshtime = $.getdata("evil_refreshtime") || $.refreshtime;
+  var minus = $.nowtime - $.savedtime;
+  if (minus > $.refreshtime * 3600000) {
+    $.setdata("[]", "evil_saveditem");
+    $.setdata(JSON.stringify($.nowtime), "evil_savedtime");
+  }
+  if (
+    $.getdata("evil_saveditem") != undefined &&
+    $.getdata("evil_saveditem") != ""
+  ) {
+    var storeitem = JSON.parse($.getdata("evil_saveditem"));
+  } else {
+    storeitem = [];
+  }
+  for (var i = 0; i < storeitem.length; i++) {
+    saveditem.push(storeitem[i]);
+  }
+  if (saveditem.length != 0) {
+    $.log("\n刷新时间内不再通知的内容👇\n" + saveditem + "\n");
+  }
+  if (
+    $.getdata("evil_wb_keyword") != undefined &&
+    $.getdata("evil_wb_keyword") != ""
+  ) {
+    var key = $.getdata("evil_wb_keyword");
+    keyword = key.split("，");
+  }
+  if (
+    $.getdata("evil_rsslink") != undefined &&
+    $.getdata("evil_rsslink") != ""
+  ) {
+    var rssurl = $.getdata("evil_rsslink");
+    rsslink = rssurl.split("，");
+  }
+  $.weibo = JSON.parse($.getdata("evil_wb") || $.weibo);
+  $.zhihu = JSON.parse($.getdata("evil_zh") || $.zhihu);
+  $.baidu = JSON.parse($.getdata("evil_bd") || $.baidu);
+  $.bilibili = JSON.parse($.getdata("evil_bl") || $.bilibili);
+  $.douban = JSON.parse($.getdata("evil_db") || $.douban);
+  $.douyin = JSON.parse($.getdata("evil_dy") || $.douyin);
+  $.k36 = JSON.parse($.getdata("evil_k36") || $.k36);
+  $.amazon = JSON.parse($.getdata("evil_amazon") || $.amazon);
+  $.rss = JSON.parse($.getdata("evil_rss") || $.rss);
+  $.zmz = JSON.parse($.getdata("evil_zmz") || $.zmz);
+  $.splitpushwb = JSON.parse($.getdata("evil_splitpushwb") || $.splitpushwb);
+  $.splitpushzh = JSON.parse($.getdata("evil_splitpushzh") || $.splitpushzh);
+  $.splitpushbd = JSON.parse($.getdata("evil_splitpushbd") || $.splitpushbd);
+  $.splitpushbl = JSON.parse($.getdata("evil_splitpushbl") || $.splitpushbl);
+  $.splitpushdb = JSON.parse($.getdata("evil_splitpushdb") || $.splitpushdb);
+  $.splitpushdy = JSON.parse($.getdata("evil_splitpushdy") || $.splitpushdy);
+  $.splitpushk36 = JSON.parse($.getdata("evil_splitpushk36") || $.splitpushk36);
+  $.splitpushamz = JSON.parse($.getdata("evil_splitpushamz") || $.splitpushamz);
+  $.splitpushrss = JSON.parse($.getdata("evil_splitpushrss") || $.splitpushrss);
+  $.splitpushzmz = JSON.parse($.getdata("evil_splitpushzmz") || $.splitpushzmz);
+  $.pushnewwb = JSON.parse($.getdata("evil_pushnewwb") || $.pushnewwb);
+  $.pushnewzh = JSON.parse($.getdata("evil_pushnewzh") || $.pushnewzh);
+  $.pushnewbd = JSON.parse($.getdata("evil_pushnewbd") || $.pushnewbd);
+  $.pushnewbl = JSON.parse($.getdata("evil_pushnewbl") || $.pushnewbl);
+  $.pushnewdb = JSON.parse($.getdata("evil_pushnewdb") || $.pushnewdb);
+  $.pushnewdy = JSON.parse($.getdata("evil_pushnewdy") || $.pushnewdy);
+  $.pushnewk36 = JSON.parse($.getdata("evil_pushnewk36") || $.pushnewk36);
+  $.pushnewamz = JSON.parse($.getdata("evil_pushnewamz") || $.pushnewamz);
+  $.pushnewrss = JSON.parse($.getdata("evil_pushnewrss") || $.pushnewrss);
+  $.pushnewzmz = JSON.parse($.getdata("evil_pushnewzmz") || $.pushnewzmz);
+  $.attachurl = JSON.parse($.getdata("evil_attachurl") || $.attachurl);
+  $.rid = $.getdata("evil_blrid") * 1 || $.rid;
+  $.wbnum = $.getdata("evil_wbnum") * 1 || $.wbnum;
+  $.zhnum = $.getdata("evil_zhnum") * 1 || $.zhnum;
+  $.bdnum = $.getdata("evil_bdnum") * 1 || $.bdnum;
+  $.blnum = $.getdata("evil_blnum") * 1 || $.blnum;
+  $.dbnum = $.getdata("evil_dbnum") * 1 || $.dbnum;
+  $.dynum = $.getdata("evil_dynum") * 1 || $.dynum;
+  $.k36num = $.getdata("evil_k36num") * 1 || $.k36num;
+  $.amznum = $.getdata("evil_amznum") * 1 || $.amznum;
+  $.rssnum = $.getdata("evil_rssnum") * 1 || $.rssnum;
+  $.zmznum = $.getdata("evil_zmznum") * 1 || $.zmznum;
+  $.time = $.getdata("evil_time") * 1000 || $.time * 1000;
+  $.log("监控关键词 " + keyword);
+  $.log("刷新时间 " + $.refreshtime + "小时");
+  $.log("此次运行时间戳 " + $.nowtime);
+  $.log("上次保存时间戳 " + $.savedtime);
+  $.log("间隔 " + (minus / 3600000).toFixed(2) + "小时");
+  $.log("监控rss链接 " + rsslink);
+  $.log("获取rss订阅 " + $.rss);
+  $.log("分开推送rss内容 " + $.splitpushrss);
+  $.log("忽略关键词获取rss最新内容 " + $.pushnewrss);
+  $.log("获取rss数量 " + $.rssnum + "个");
+  $.log("获取微博热搜 " + $.weibo);
+  $.log("分开推送微博内容 " + $.splitpushwb);
+  $.log("忽略关键词获取微博最热内容 " + $.pushnewwb);
+  $.log("获取微博热搜数量 " + $.wbnum + "个");
+  $.log("获取知乎热榜 " + $.zhihu);
+  $.log("分开推送知乎内容 " + $.splitpushzh);
+  $.log("忽略关键词获取知乎最热内容 " + $.pushnewzh);
+  $.log("获取知乎热榜数量 " + $.zhnum + "个");
+  $.log("获取百度风云榜 " + $.baidu);
+  $.log("分开推送百度内容 " + $.splitpushbd);
+  $.log("忽略关键词获取百度最热内容 " + $.pushnewbd);
+  $.log("获取百度风云榜数量 " + $.bdnum + "个");
+  $.log("获取B站榜单 " + $.bilibili);
+  $.log("分开推送B站内容 " + $.splitpushbl);
+  $.log("忽略关键词获取B站最热内容 " + $.pushnewbl);
+  $.log("获取B站日榜数量 " + $.blnum + "个");
+  $.log("获取豆瓣榜单 " + $.douban);
+  $.log("分开推送豆瓣内容 " + $.splitpushdb);
+  $.log("忽略关键词获取豆瓣最热内容 " + $.pushnewdb);
+  $.log("获取豆瓣榜单数量 " + $.dbnum + "个");
+  $.log("获取抖音榜单 " + $.douyin);
+  $.log("分开推送抖音内容 " + $.splitpushdy);
+  $.log("忽略关键词获取抖音最热内容 " + $.pushnewdy);
+  $.log("获取抖音榜单数量 " + $.dynum + "个");
+  $.log("获取36氪榜单 " + $.k36);
+  $.log("分开推送36氪内容 " + $.splitpushk36);
+  $.log("忽略关键词获取36氪最热内容 " + $.pushnewk36);
+  $.log("获取36氪榜单数量 " + $.k36num + "个");
+  $.log("获取Kindle图书榜单 " + $.amazon);
+  $.log("分开推送Kindle图书内容 " + $.splitpushamz);
+  $.log("忽略关键词获取Kindle图书最热内容 " + $.pushnewamz);
+  $.log("获取Kindle图书榜单数量 " + $.amznum + "个");
+  $.log("获取人人影视榜单 " + $.zmz);
+  $.log("分开推送人人影视内容 " + $.splitpushzmz);
+  $.log("忽略关键词获取人人影视最新内容 " + $.pushnewzmz);
+  $.log("获取人人影视榜单数量 " + $.zmznum + "个");
+  if ($.getdata("evil_cltz") == "1") {
+    $.log("调用迅雷");
+  } else if ($.getdata("evil_cltz") == "2") {
+    $.log("调用115");
+  }
+  $.link =
+    "shortcuts://x-callback-url/run-shortcut?name=%E7%A3%81%E5%8A%9B%E7%A6%BB%E7%BA%BF&input=";
+  $.log("附带跳转链接 " + $.attachurl + "\n");
 }
 
 function gethotsearch() {
-  console.log("开始获取微博榜单...");
+  $.log("开始获取微博榜单...");
   return new Promise(resolve => {
     try {
       const wbRequest = {
@@ -378,6 +522,9 @@ function gethotsearch() {
           "https://m.weibo.cn/api/container/getIndex?containerid=106003%26filter_type%3Drealtimehot"
       };
       $.get(wbRequest, (error, response, data) => {
+        if (error) {
+          throw new Error(error);
+        }
         if (response.statusCode == 200) {
           var body = response.body;
           var obj = JSON.parse(body);
@@ -407,7 +554,7 @@ function gethotsearch() {
             itemswb.push(item);
             urlswb.push(url);
           }
-          console.log("微博热搜获取成功✅\n" + itemswb);
+          $.log("微博热搜获取成功✅\n" + itemswb);
           if ($.pushnewwb == false) {
             for (var j = 0; j < keyword.length; j++) {
               getkeywordcontenturl(
@@ -433,14 +580,14 @@ function gethotsearch() {
           }
           resolve();
         } else {
-          console.log("获取微博热搜出现错误❌以下详情：\n");
-          console.log(response);
+          $.log("获取微博热搜出现错误❌以下详情：\n");
+          $.log(response);
         }
         resolve();
       });
     } catch (e) {
-      console.log("获取微博热搜出现错误❌原因：\n");
-      console.log(e);
+      $.log("获取微博热搜出现错误❌原因：\n");
+      $.log(e);
       resolve();
     }
     setTimeout(() => {
@@ -450,7 +597,7 @@ function gethotsearch() {
 }
 
 function gethotlist() {
-  console.log("开始获取知乎榜单...");
+  $.log("开始获取知乎榜单...");
   return new Promise(resolve => {
     try {
       const zhRequest = {
@@ -458,6 +605,9 @@ function gethotlist() {
           "https://api.zhihu.com/topstory/hot-lists/total?limit=10&reverse_order=0"
       };
       $.get(zhRequest, (error, response, data) => {
+        if (error) {
+          throw new Error(error);
+        }
         if (response.statusCode == 200) {
           var body = response.body;
           var obj = JSON.parse(body);
@@ -483,7 +633,7 @@ function gethotlist() {
             itemszh.push(item);
             urlszh.push(url);
           }
-          console.log("知乎热榜获取成功✅\n" + itemszh);
+          $.log("知乎热榜获取成功✅\n" + itemszh);
           if ($.pushnewzh == false) {
             for (var j = 0; j < keyword.length; j++) {
               getkeywordcontenturl(
@@ -509,14 +659,14 @@ function gethotlist() {
           }
           resolve();
         } else {
-          console.log("获取知乎热榜出现错误❌以下详情：\n");
-          console.log(response);
+          $.log("获取知乎热榜出现错误❌以下详情：\n");
+          $.log(response);
         }
         resolve();
       });
     } catch (e) {
-      console.log("获取知乎热榜出现错误❌原因：\n");
-      console.log(e);
+      $.log("获取知乎热榜出现错误❌原因：\n");
+      $.log(e);
       resolve();
     }
     setTimeout(() => {
@@ -526,13 +676,16 @@ function gethotlist() {
 }
 
 function getfylist() {
-  console.log("开始获取百度榜单...");
+  $.log("开始获取百度榜单...");
   return new Promise(resolve => {
     try {
       const bdRequest = {
         url: "http://top.baidu.com/mobile_v2/buzz?b=1&c=515"
       };
       $.get(bdRequest, (error, response, data) => {
+        if (error) {
+          throw new Error(error);
+        }
         if (response.statusCode == 200) {
           var body = response.body;
           var obj = JSON.parse(body);
@@ -567,7 +720,7 @@ function getfylist() {
             itemsbd.push(item);
             urlsbd.push(url);
           }
-          console.log("百度风云榜获取成功✅\n" + itemsbd);
+          $.log("百度风云榜获取成功✅\n" + itemsbd);
           if ($.pushnewbd == false) {
             for (var j = 0; j < keyword.length; j++) {
               getkeywordcontenturl(
@@ -593,14 +746,14 @@ function getfylist() {
           }
           resolve();
         } else {
-          console.log("获取百度风云榜出现错误❌以下详情：\n");
-          console.log(response);
+          $.log("获取百度风云榜出现错误❌以下详情：\n");
+          $.log(response);
         }
         resolve();
       });
     } catch (e) {
-      console.log("获取百度风云榜出现错误❌原因：\n");
-      console.log(e);
+      $.log("获取百度风云榜出现错误❌原因：\n");
+      $.log(e);
       resolve();
     }
     setTimeout(() => {
@@ -610,7 +763,7 @@ function getfylist() {
 }
 
 function getbllist() {
-  console.log("开始获取B站日榜...");
+  $.log("开始获取B站日榜...");
   return new Promise(resolve => {
     try {
       const blRequest = {
@@ -646,7 +799,7 @@ function getbllist() {
             urlsbl.push(url);
             coversbl.push(cover);
           }
-          console.log("B站日榜获取成功✅\n" + itemsbl);
+          $.log("B站日榜获取成功✅\n" + itemsbl);
           if ($.pushnewbl == false) {
             for (var j = 0; j < keyword.length; j++) {
               getkeywordcontentmedia(
@@ -676,14 +829,14 @@ function getbllist() {
           }
           resolve();
         } else {
-          console.log("获取B站日榜出现错误❌以下详情:\n");
-          console.log(response);
+          $.log("获取B站日榜出现错误❌以下详情:\n");
+          $.log(response);
         }
         resolve();
       });
     } catch (e) {
-      console.log("获取B站日榜出现错误❌原因：\n");
-      console.log(e);
+      $.log("获取B站日榜出现错误❌原因：\n");
+      $.log(e);
       resolve();
     }
     setTimeout(() => {
@@ -693,7 +846,7 @@ function getbllist() {
 }
 
 function getdblist() {
-  console.log("开始获取豆瓣榜单...");
+  $.log("开始获取豆瓣榜单...");
   return new Promise(resolve => {
     try {
       const dbheader = {
@@ -740,7 +893,7 @@ function getdblist() {
             urlsdb.push(url);
             coversdb.push(cover);
           }
-          console.log("豆瓣榜单获取成功✅\n" + itemsdb);
+          $.log("豆瓣榜单获取成功✅\n" + itemsdb);
           if ($.pushnewdb == false) {
             for (var j = 0; j < keyword.length; j++) {
               getkeywordcontentmedia(
@@ -770,14 +923,14 @@ function getdblist() {
           }
           resolve();
         } else {
-          console.log("获取豆瓣榜单出现错误❌以下详情:\n");
-          console.log(response);
+          $.log("获取豆瓣榜单出现错误❌以下详情:\n");
+          $.log(response);
         }
         resolve();
       });
     } catch (e) {
-      console.log("获取豆瓣榜单出现错误❌原因：\n");
-      console.log(e);
+      $.log("获取豆瓣榜单出现错误❌原因：\n");
+      $.log(e);
       resolve();
     }
     setTimeout(() => {
@@ -787,7 +940,7 @@ function getdblist() {
 }
 
 function getdylist() {
-  console.log("开始获取抖音榜单...");
+  $.log("开始获取抖音榜单...");
   return new Promise(resolve => {
     try {
       const dyRequest = {
@@ -800,7 +953,7 @@ function getdylist() {
         if (response.statusCode == 200) {
           var body = response.body;
           parsehtml(body, itemsdy, urlsdy);
-          console.log("抖音榜单获取成功✅\n" + itemsdy);
+          $.log("抖音榜单获取成功✅\n" + itemsdy);
           if ($.pushnewdy == false) {
             for (var j = 0; j < keyword.length; j++) {
               getkeywordcontenturl(
@@ -826,14 +979,14 @@ function getdylist() {
           }
           resolve();
         } else {
-          console.log("获取抖音榜单出现错误❌以下详情:\n");
-          console.log(response);
+          $.log("获取抖音榜单出现错误❌以下详情:\n");
+          $.log(response);
         }
         resolve();
       });
     } catch (e) {
-      console.log("获取抖音榜单出现错误❌原因：\n");
-      console.log(e);
+      $.log("获取抖音榜单出现错误❌原因：\n");
+      $.log(e);
       resolve();
     }
     setTimeout(() => {
@@ -843,7 +996,7 @@ function getdylist() {
 }
 
 function getk36list() {
-  console.log("开始获取36氪榜单...");
+  $.log("开始获取36氪榜单...");
   return new Promise(resolve => {
     try {
       const k36Request = {
@@ -856,7 +1009,7 @@ function getk36list() {
         if (response.statusCode == 200) {
           var body = response.body;
           parsehtml(body, itemsk36, urlsk36);
-          console.log("36氪榜单获取成功✅\n" + itemsk36);
+          $.log("36氪榜单获取成功✅\n" + itemsk36);
           if ($.pushnewk36 == false) {
             for (var j = 0; j < keyword.length; j++) {
               getkeywordcontenturl(
@@ -882,14 +1035,14 @@ function getk36list() {
           }
           resolve();
         } else {
-          console.log("获取36氪榜单出现错误❌以下详情:\n");
-          console.log(response);
+          $.log("获取36氪榜单出现错误❌以下详情:\n");
+          $.log(response);
         }
         resolve();
       });
     } catch (e) {
-      console.log("获取36氪榜单出现错误❌原因：\n");
-      console.log(e);
+      $.log("获取36氪榜单出现错误❌原因：\n");
+      $.log(e);
       resolve();
     }
     setTimeout(() => {
@@ -899,7 +1052,7 @@ function getk36list() {
 }
 
 function getamazonlist() {
-  console.log("开始获取Kindle图书榜单...");
+  $.log("开始获取Kindle图书榜单...");
   return new Promise(resolve => {
     try {
       const amazonRequest = {
@@ -916,7 +1069,7 @@ function getamazonlist() {
         if (response.statusCode == 200) {
           var body = response.body;
           parsehtmlkindle(body, itemsamz, urlsamz, coversamz);
-          console.log("Kindle图书榜单获取成功✅\n" + itemsamz);
+          $.log("Kindle图书榜单获取成功✅\n" + itemsamz);
           if ($.pushnewamz == false) {
             for (var j = 0; j < keyword.length; j++) {
               getkeywordcontentmedia(
@@ -946,14 +1099,95 @@ function getamazonlist() {
           }
           resolve();
         } else {
-          console.log("获取Kindle图书榜单出现错误❌以下详情:\n");
-          console.log(response);
+          $.log("获取Kindle图书榜单出现错误❌以下详情:\n");
+          $.log(response);
         }
         resolve();
       });
     } catch (e) {
-      console.log("获取Kindle图书榜单出现错误❌原因：\n");
-      console.log(e);
+      $.log("获取Kindle图书榜单出现错误❌原因：\n");
+      $.log(e);
+      resolve();
+    }
+    setTimeout(() => {
+      resolve();
+    }, $.time);
+  });
+}
+
+function getzmzlist() {
+  $.log("开始获取人人影视榜单...");
+  return new Promise(resolve => {
+    try {
+      const zmzRequest = {
+        url: `http://file.apicvn.com/file/list?page=1&order=create_time&sort=desc`,
+        headers: {
+          Host: "file.apicvn.com",
+          "Content-Type": "application/x-www-form-urlencoded",
+          "User-Agent": "Mozilla/5.0"
+        }
+      };
+      $.get(zmzRequest, (error, response, data) => {
+        if (error) {
+          throw new Error(error);
+        }
+        if (response.statusCode == 200) {
+          var body = response.body;
+          var obj = JSON.parse(body);
+          for (var i = 0; i < obj.length; i++) {
+            var item = obj[i]["file_name"];
+            var oriurl = obj[i]["magnet_url"];
+            if ($.getdata("evil_cltz") == "1") {
+              var posturl = "xunlei｜" + oriurl;
+            } else if ($.getdata("evil_cltz") == "2") {
+              posturl = "115｜" + oriurl;
+            }
+            var encodeurl = base64.encode(posturl);
+            var url = $.link + encodeurl;
+            var size = (obj[i]["file_size"] / 1048576).toFixed(2);
+            var finalsize = size + "MB";
+            if (size > 1024) {
+              size = (obj[i]["file_size"] / 1073741824).toFixed(2);
+              finalsize = size + "GB";
+            }
+            var finalitem = item + "\n📦大小：" + finalsize;
+            itemszmz.push(finalitem);
+            urlszmz.push(url);
+          }
+          $.log("人人影视榜单获取成功✅\n" + itemszmz);
+          if ($.pushnewzmz == false) {
+            for (var j = 0; j < keyword.length; j++) {
+              getkeywordcontenturl(
+                $.splitpushzmz,
+                "人人影视",
+                resultzmz,
+                openurlzmz,
+                keyword[j],
+                itemszmz,
+                urlszmz
+              );
+            }
+          } else {
+            gethotcontenturl(
+              $.splitpushzmz,
+              "人人影视",
+              resultzmz,
+              openurlzmz,
+              $.zmznum,
+              itemszmz,
+              urlszmz
+            );
+          }
+          resolve();
+        } else {
+          $.log("获取人人影视榜单出现错误❌以下详情:\n");
+          $.log(response);
+        }
+        resolve();
+      });
+    } catch (e) {
+      $.log("获取人人影视榜单出现错误❌原因：\n");
+      $.log(e);
       resolve();
     }
     setTimeout(() => {
@@ -972,7 +1206,7 @@ function getrsslist(
   urlsrss,
   coversrss
 ) {
-  console.log("开始获取RSS内容...");
+  $.log("开始获取RSS内容...");
   return new Promise(resolve => {
     try {
       const rssRequest = {
@@ -985,7 +1219,7 @@ function getrsslist(
         if (response.statusCode == 200) {
           var body = response.body;
           parsehtmlrss(body, titlerss, itemsrss, urlsrss, coversrss);
-          console.log("RSS内容获取成功✅\n" + itemsrss);
+          $.log("RSS内容获取成功✅\n" + itemsrss);
           if ($.pushnewrss == false) {
             for (var j = 0; j < keyword.length; j++) {
               getkeywordcontentmedia(
@@ -1015,14 +1249,14 @@ function getrsslist(
           }
           resolve();
         } else {
-          console.log("获取RSS内容出现错误❌以下详情:\n");
-          console.log(response);
+          $.log("获取RSS内容出现错误❌以下详情:\n");
+          $.log(response);
         }
         resolve();
       });
     } catch (e) {
-      console.log("获取RSS内容出现错误❌原因：\n");
-      console.log(e);
+      $.log("获取RSS内容出现错误❌原因：\n");
+      $.log(e);
       resolve();
     }
     setTimeout(() => {
@@ -1168,7 +1402,7 @@ function getkeywordcontenturl(
 ) {
   if (splitpush == false) {
     for (var i = 0; i < items.length; i++) {
-      if (items[i].indexOf(key) != -1) {
+      if (items[i].indexOf(key) != -1 && saveditem.indexOf(items[i]) == -1) {
         if ($.attachurl == true) {
           result.push(
             `🎉"${text}"的关键词"${key}"更新\n第${i + 1}名：${items[i]}\n${
@@ -1180,11 +1414,12 @@ function getkeywordcontenturl(
             `🎉"${text}"的关键词"${key}"更新\n第${i + 1}名：${items[i]}`
           );
         }
+        saveditem.push(items[i]);
       }
     }
   } else {
     for (i = 0; i < items.length; i++) {
-      if (items[i].indexOf(key) != -1) {
+      if (items[i].indexOf(key) != -1 && saveditem.indexOf(items[i]) == -1) {
         if ($.attachurl == true) {
           result.push(
             `🎉"${text}"的关键词"${key}"更新\n第${i + 1}名：${items[i]}\n${
@@ -1197,6 +1432,7 @@ function getkeywordcontenturl(
           );
         }
         openurl.push(urls[i]);
+        saveditem.push(items[i]);
       }
     }
   }
@@ -1248,7 +1484,7 @@ function getkeywordcontentmedia(
 ) {
   if (splitpush == false) {
     for (var i = 0; i < items.length; i++) {
-      if (items[i].indexOf(key) != -1) {
+      if (items[i].indexOf(key) != -1 && saveditem.indexOf(items[i]) == -1) {
         if ($.attachurl == true) {
           result.push(
             `🎉"${text}"的关键词"${key}"更新\n第${i + 1}名：${items[i]}\n${
@@ -1260,11 +1496,12 @@ function getkeywordcontentmedia(
             `🎉"${text}"的关键词"${key}"更新\n第${i + 1}名：${items[i]}`
           );
         }
+        saveditem.push(items[i]);
       }
     }
   } else {
     for (i = 0; i < items.length; i++) {
-      if (items[i].indexOf(key) != -1) {
+      if (items[i].indexOf(key) != -1 && saveditem.indexOf(items[i]) == -1) {
         if ($.attachurl == true) {
           result.push(
             `🎉"${text}"的关键词"${key}"更新\n第${i + 1}名：${items[i]}\n${
@@ -1278,6 +1515,7 @@ function getkeywordcontentmedia(
         }
         openurl.push(urls[i]);
         mediaurl.push(covers[i]);
+        saveditem.push(items[i]);
       }
     }
   }
@@ -1379,10 +1617,12 @@ function last() {
     resultdy.length == 0 &&
     resultk36.length == 0 &&
     resultamz.length == 0 &&
+    resultzmz.length == 0 &&
     checkrssresult() == false
   ) {
-    console.log(`\n😫您订阅的关键词"${keyword}"暂时没有更新`);
+    $.log(`\n😫您订阅的关键词"${keyword}"暂时没有更新`);
   }
+  $.setdata(JSON.stringify(saveditem), "evil_saveditem");
 }
 
 function final() {
@@ -1395,7 +1635,8 @@ function final() {
     $.douyin == false &&
     $.k36 == false &&
     $.amazon == false &&
-    $.rss == false
+    $.rss == false &&
+    $.zmz == false
   ) {
     $.msg(
       "热门监控",
@@ -1416,282 +1657,521 @@ function deluselessck() {
   $.setdata("", "evil_bilibilicookie");
   $.setdata("", "evil_doubanurl");
   $.setdata("", "evil_doubancookie");
-  console.log("\n已清除无用Cookie✅");
+  $.log("\n已清除无用Cookie✅");
 }
 
-//chavyleung
-function Env(t, s) {
+function getCookie() {
+  /*if (
+    $request &&
+    $request.method != "OPTIONS" &&
+    $request.url.match(/display\_time/)
+  ) {
+    const siurl = $request.url;
+    $.log(siurl);
+    const sicookie = JSON.stringify($request.headers);
+    $.log(sicookie);
+    $.setdata(siurl, url);
+    $.setdata(sicookie, cookie);
+    $.msg("热门监控", "", "获取微博热搜Cookie成功🎉");
+  }*/
+}
+
+//From https://github.com/dankogai/js-base64
+function Base64Code() {
+  var r = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/",
+    t = (function(r) {
+      for (var t = {}, e = 0, n = r.length; e < n; e++) t[r.charAt(e)] = e;
+      return t;
+    })(r),
+    e = String.fromCharCode,
+    n = function(r) {
+      if (r.length < 2) {
+        var t = r.charCodeAt(0);
+        return t < 128
+          ? r
+          : t < 2048
+          ? e(192 | (t >>> 6)) + e(128 | (63 & t))
+          : e(224 | ((t >>> 12) & 15)) +
+            e(128 | ((t >>> 6) & 63)) +
+            e(128 | (63 & t));
+      }
+      t = 65536 + 1024 * (r.charCodeAt(0) - 55296) + (r.charCodeAt(1) - 56320);
+      return (
+        e(240 | ((t >>> 18) & 7)) +
+        e(128 | ((t >>> 12) & 63)) +
+        e(128 | ((t >>> 6) & 63)) +
+        e(128 | (63 & t))
+      );
+    },
+    c = /[\uD800-\uDBFF][\uDC00-\uDFFFF]|[^\x00-\x7F]/g,
+    a = function(r) {
+      return r.replace(c, n);
+    },
+    o = function(t) {
+      var e = [0, 2, 1][t.length % 3],
+        n =
+          (t.charCodeAt(0) << 16) |
+          ((t.length > 1 ? t.charCodeAt(1) : 0) << 8) |
+          (t.length > 2 ? t.charCodeAt(2) : 0),
+        c = [
+          r.charAt(n >>> 18),
+          r.charAt((n >>> 12) & 63),
+          e >= 2 ? "=" : r.charAt((n >>> 6) & 63),
+          e >= 1 ? "=" : r.charAt(63 & n)
+        ];
+      return c.join("");
+    },
+    h = function(r) {
+      return r.replace(/[\s\S]{1,3}/g, o);
+    };
+  this.encode = function(r) {
+    var t = "[object Uint8Array]" === Object.prototype.toString.call(r);
+    return t ? r.toString("base64") : h(a(String(r)));
+  };
+  var u = /[\xC0-\xDF][\x80-\xBF]|[\xE0-\xEF][\x80-\xBF]{2}|[\xF0-\xF7][\x80-\xBF]{3}/g,
+    i = function(r) {
+      switch (r.length) {
+        case 4:
+          var t =
+              ((7 & r.charCodeAt(0)) << 18) |
+              ((63 & r.charCodeAt(1)) << 12) |
+              ((63 & r.charCodeAt(2)) << 6) |
+              (63 & r.charCodeAt(3)),
+            n = t - 65536;
+          return e(55296 + (n >>> 10)) + e(56320 + (1023 & n));
+        case 3:
+          return e(
+            ((15 & r.charCodeAt(0)) << 12) |
+              ((63 & r.charCodeAt(1)) << 6) |
+              (63 & r.charCodeAt(2))
+          );
+        default:
+          return e(((31 & r.charCodeAt(0)) << 6) | (63 & r.charCodeAt(1)));
+      }
+    },
+    A = function(r) {
+      return r.replace(u, i);
+    },
+    g = function(r) {
+      var n = r.length,
+        c = n % 4,
+        a =
+          (n > 0 ? t[r.charAt(0)] << 18 : 0) |
+          (n > 1 ? t[r.charAt(1)] << 12 : 0) |
+          (n > 2 ? t[r.charAt(2)] << 6 : 0) |
+          (n > 3 ? t[r.charAt(3)] : 0),
+        o = [e(a >>> 16), e((a >>> 8) & 255), e(255 & a)];
+      return (o.length -= [0, 0, 2, 1][c]), o.join("");
+    },
+    d = function(r) {
+      return r.replace(/\S{1,4}/g, g);
+    },
+    l = function(r) {
+      return A(d(r));
+    };
+  this.decode = function(r) {
+    return l(
+      String(r)
+        .replace(/[-_]/g, function(r) {
+          return "-" == r ? "+" : "/";
+        })
+        .replace(/[^A-Za-z0-9\+\/]/g, "")
+    )
+      .replace(/&gt;/g, ">")
+      .replace(/&lt;/g, "<");
+  };
+}
+
+//From chavyleung's Env.js
+function Env(name, opts) {
   return new (class {
-    constructor(t, s) {
-      (this.name = t),
-        (this.data = null),
-        (this.dataFile = "box.dat"),
-        (this.logs = []),
-        (this.logSeparator = "\n"),
-        (this.startTime = new Date().getTime()),
-        Object.assign(this, s),
-        this.log("", `\ud83d\udd14${this.name}, \u5f00\u59cb!`);
+    constructor(name, opts) {
+      this.name = name;
+      this.data = null;
+      this.dataFile = "box.dat";
+      this.logs = [];
+      this.isMute = false;
+      this.logSeparator = "\n";
+      this.startTime = new Date().getTime();
+      Object.assign(this, opts);
+      this.log("", `🔔${this.name}, 开始!`);
     }
     isNode() {
-      return "undefined" != typeof module && !!module.exports;
+      return "undefined" !== typeof module && !!module.exports;
     }
     isQuanX() {
-      return "undefined" != typeof $task;
+      return "undefined" !== typeof $task;
     }
     isSurge() {
-      return "undefined" != typeof $httpClient;
+      return "undefined" !== typeof $httpClient && "undefined" === typeof $loon;
     }
     isLoon() {
-      return "undefined" != typeof $loon;
+      return "undefined" !== typeof $loon;
+    }
+    getScript(url) {
+      return new Promise(resolve => {
+        this.get({ url }, (err, resp, body) => resolve(body));
+      });
+    }
+    runScript(script, runOpts) {
+      return new Promise(resolve => {
+        let httpapi = this.getdata("@chavy_boxjs_userCfgs.httpapi");
+        httpapi = httpapi ? httpapi.replace(/\n/g, "").trim() : httpapi;
+        let httpapi_timeout = this.getdata(
+          "@chavy_boxjs_userCfgs.httpapi_timeout"
+        );
+        httpapi_timeout = httpapi_timeout ? httpapi_timeout * 1 : 20;
+        httpapi_timeout =
+          runOpts && runOpts.timeout ? runOpts.timeout : httpapi_timeout;
+        const [key, addr] = httpapi.split("@");
+        const opts = {
+          url: `http://${addr}/v1/scripting/evaluate`,
+          body: {
+            script_text: script,
+            mock_type: "cron",
+            timeout: httpapi_timeout
+          },
+          headers: { "X-Key": key, Accept: "*/*" }
+        };
+        this.post(opts, (err, resp, body) => resolve(body));
+      }).catch(e => this.logErr(e));
     }
     loaddata() {
-      if (!this.isNode()) return {};
-      {
-        (this.fs = this.fs ? this.fs : require("fs")),
-          (this.path = this.path ? this.path : require("path"));
-        const t = this.path.resolve(this.dataFile),
-          s = this.path.resolve(process.cwd(), this.dataFile),
-          e = this.fs.existsSync(t),
-          i = !e && this.fs.existsSync(s);
-        if (!e && !i) return {};
-        {
-          const i = e ? t : s;
+      if (this.isNode()) {
+        this.fs = this.fs ? this.fs : require("fs");
+        this.path = this.path ? this.path : require("path");
+        const curDirDataFilePath = this.path.resolve(this.dataFile);
+        const rootDirDataFilePath = this.path.resolve(
+          process.cwd(),
+          this.dataFile
+        );
+        const isCurDirDataFile = this.fs.existsSync(curDirDataFilePath);
+        const isRootDirDataFile =
+          !isCurDirDataFile && this.fs.existsSync(rootDirDataFilePath);
+        if (isCurDirDataFile || isRootDirDataFile) {
+          const datPath = isCurDirDataFile
+            ? curDirDataFilePath
+            : rootDirDataFilePath;
           try {
-            return JSON.parse(this.fs.readFileSync(i));
+            return JSON.parse(this.fs.readFileSync(datPath));
           } catch (e) {
             return {};
           }
-        }
-      }
+        } else return {};
+      } else return {};
     }
     writedata() {
       if (this.isNode()) {
-        (this.fs = this.fs ? this.fs : require("fs")),
-          (this.path = this.path ? this.path : require("path"));
-        const t = this.path.resolve(this.dataFile),
-          s = this.path.resolve(process.cwd(), this.dataFile),
-          e = this.fs.existsSync(t),
-          i = !e && this.fs.existsSync(s),
-          o = JSON.stringify(this.data);
-        e
-          ? this.fs.writeFileSync(t, o)
-          : i
-          ? this.fs.writeFileSync(s, o)
-          : this.fs.writeFileSync(t, o);
-      }
-    }
-    lodash_get(t, s, e) {
-      const i = s.replace(/\[(\d+)\]/g, ".$1").split(".");
-      let o = t;
-      for (const t of i) if (((o = Object(o)[t]), void 0 === o)) return e;
-      return o;
-    }
-    lodash_set(t, s, e) {
-      return Object(t) !== t
-        ? t
-        : (Array.isArray(s) || (s = s.toString().match(/[^.[\]]+/g) || []),
-          (s
-            .slice(0, -1)
-            .reduce(
-              (t, e, i) =>
-                Object(t[e]) === t[e]
-                  ? t[e]
-                  : (t[e] = Math.abs(s[i + 1]) >> 0 == +s[i + 1] ? [] : {}),
-              t
-            )[s[s.length - 1]] = e),
-          t);
-    }
-    getdata(t) {
-      let s = this.getval(t);
-      if (/^@/.test(t)) {
-        const [, e, i] = /^@(.*?)\.(.*?)$/.exec(t),
-          o = e ? this.getval(e) : "";
-        if (o)
-          try {
-            const t = JSON.parse(o);
-            s = t ? this.lodash_get(t, i, "") : s;
-          } catch (t) {
-            s = "";
-          }
-      }
-      return s;
-    }
-    setdata(t, s) {
-      let e = !1;
-      if (/^@/.test(s)) {
-        const [, i, o] = /^@(.*?)\.(.*?)$/.exec(s),
-          h = this.getval(i),
-          a = i ? ("null" === h ? null : h || "{}") : "{}";
-        try {
-          const s = JSON.parse(a);
-          this.lodash_set(s, o, t),
-            (e = this.setval(JSON.stringify(s), i)),
-            console.log(`${i}: ${JSON.stringify(s)}`);
-        } catch (e) {
-          const s = {};
-          this.lodash_set(s, o, t),
-            (e = this.setval(JSON.stringify(s), i)),
-            console.log(`${i}: ${JSON.stringify(s)}`);
+        this.fs = this.fs ? this.fs : require("fs");
+        this.path = this.path ? this.path : require("path");
+        const curDirDataFilePath = this.path.resolve(this.dataFile);
+        const rootDirDataFilePath = this.path.resolve(
+          process.cwd(),
+          this.dataFile
+        );
+        const isCurDirDataFile = this.fs.existsSync(curDirDataFilePath);
+        const isRootDirDataFile =
+          !isCurDirDataFile && this.fs.existsSync(rootDirDataFilePath);
+        const jsondata = JSON.stringify(this.data);
+        if (isCurDirDataFile) {
+          this.fs.writeFileSync(curDirDataFilePath, jsondata);
+        } else if (isRootDirDataFile) {
+          this.fs.writeFileSync(rootDirDataFilePath, jsondata);
+        } else {
+          this.fs.writeFileSync(curDirDataFilePath, jsondata);
         }
-      } else e = $.setval(t, s);
-      return e;
+      }
     }
-    getval(t) {
-      return this.isSurge() || this.isLoon()
-        ? $persistentStore.read(t)
-        : this.isQuanX()
-        ? $prefs.valueForKey(t)
-        : this.isNode()
-        ? ((this.data = this.loaddata()), this.data[t])
-        : (this.data && this.data[t]) || null;
+    lodash_get(source, path, defaultValue = undefined) {
+      const paths = path.replace(/\[(\d+)\]/g, ".$1").split(".");
+      let result = source;
+      for (const p of paths) {
+        result = Object(result)[p];
+        if (result === undefined) {
+          return defaultValue;
+        }
+      }
+      return result;
     }
-    setval(t, s) {
-      return this.isSurge() || this.isLoon()
-        ? $persistentStore.write(t, s)
-        : this.isQuanX()
-        ? $prefs.setValueForKey(t, s)
-        : this.isNode()
-        ? ((this.data = this.loaddata()),
-          (this.data[s] = t),
-          this.writedata(),
-          !0)
-        : (this.data && this.data[s]) || null;
+    lodash_set(obj, path, value) {
+      if (Object(obj) !== obj) return obj;
+      if (!Array.isArray(path)) path = path.toString().match(/[^.[\]]+/g) || [];
+      path
+        .slice(0, -1)
+        .reduce(
+          (a, c, i) =>
+            Object(a[c]) === a[c]
+              ? a[c]
+              : (a[c] = Math.abs(path[i + 1]) >> 0 === +path[i + 1] ? [] : {}),
+          obj
+        )[path[path.length - 1]] = value;
+      return obj;
     }
-    initGotEnv(t) {
-      (this.got = this.got ? this.got : require("got")),
-        (this.cktough = this.cktough ? this.cktough : require("tough-cookie")),
-        (this.ckjar = this.ckjar ? this.ckjar : new this.cktough.CookieJar()),
-        t &&
-          ((t.headers = t.headers ? t.headers : {}),
-          void 0 === t.headers.Cookie &&
-            void 0 === t.cookieJar &&
-            (t.cookieJar = this.ckjar));
+    getdata(key) {
+      let val = this.getval(key);
+      // 如果以 @
+      if (/^@/.test(key)) {
+        const [, objkey, paths] = /^@(.*?)\.(.*?)$/.exec(key);
+        const objval = objkey ? this.getval(objkey) : "";
+        if (objval) {
+          try {
+            const objedval = JSON.parse(objval);
+            val = objedval ? this.lodash_get(objedval, paths, "") : val;
+          } catch (e) {
+            val = "";
+          }
+        }
+      }
+      return val;
     }
-    get(t, s = () => {}) {
-      t.headers &&
-        (delete t.headers["Content-Type"], delete t.headers["Content-Length"]),
-        this.isSurge() || this.isLoon()
-          ? $httpClient.get(t, (t, e, i) => {
-              !t && e && ((e.body = i), (e.statusCode = e.status), s(t, e, i));
-            })
-          : this.isQuanX()
-          ? $task.fetch(t).then(
-              t => {
-                const { statusCode: e, statusCode: i, headers: o, body: h } = t;
-                s(null, { status: e, statusCode: i, headers: o, body: h }, h);
-              },
-              t => s(t)
-            )
-          : this.isNode() &&
-            (this.initGotEnv(t),
-            this.got(t)
-              .on("redirect", (t, s) => {
-                try {
-                  const e = t.headers["set-cookie"]
-                    .map(this.cktough.Cookie.parse)
-                    .toString();
-                  this.ckjar.setCookieSync(e, null), (s.cookieJar = this.ckjar);
-                } catch (t) {
-                  this.logErr(t);
-                }
-              })
-              .then(
-                t => {
-                  const {
-                    statusCode: e,
-                    statusCode: i,
-                    headers: o,
-                    body: h
-                  } = t;
-                  s(null, { status: e, statusCode: i, headers: o, body: h }, h);
-                },
-                t => s(t)
-              ));
+    setdata(val, key) {
+      let issuc = false;
+      if (/^@/.test(key)) {
+        const [, objkey, paths] = /^@(.*?)\.(.*?)$/.exec(key);
+        const objdat = this.getval(objkey);
+        const objval = objkey
+          ? objdat === "null"
+            ? null
+            : objdat || "{}"
+          : "{}";
+        try {
+          const objedval = JSON.parse(objval);
+          this.lodash_set(objedval, paths, val);
+          issuc = this.setval(JSON.stringify(objedval), objkey);
+        } catch (e) {
+          const objedval = {};
+          this.lodash_set(objedval, paths, val);
+          issuc = this.setval(JSON.stringify(objedval), objkey);
+        }
+      } else {
+        issuc = this.setval(val, key);
+      }
+      return issuc;
     }
-    post(t, s = () => {}) {
-      if (
-        (t.body &&
-          t.headers &&
-          !t.headers["Content-Type"] &&
-          (t.headers["Content-Type"] = "application/x-www-form-urlencoded"),
-        delete t.headers["Content-Length"],
-        this.isSurge() || this.isLoon())
-      )
-        $httpClient.post(t, (t, e, i) => {
-          !t && e && ((e.body = i), (e.statusCode = e.status), s(t, e, i));
+    getval(key) {
+      if (this.isSurge() || this.isLoon()) {
+        return $persistentStore.read(key);
+      } else if (this.isQuanX()) {
+        return $prefs.valueForKey(key);
+      } else if (this.isNode()) {
+        this.data = this.loaddata();
+        return this.data[key];
+      } else {
+        return (this.data && this.data[key]) || null;
+      }
+    }
+    setval(val, key) {
+      if (this.isSurge() || this.isLoon()) {
+        return $persistentStore.write(val, key);
+      } else if (this.isQuanX()) {
+        return $prefs.setValueForKey(val, key);
+      } else if (this.isNode()) {
+        this.data = this.loaddata();
+        this.data[key] = val;
+        this.writedata();
+        return true;
+      } else {
+        return (this.data && this.data[key]) || null;
+      }
+    }
+    initGotEnv(opts) {
+      this.got = this.got ? this.got : require("got");
+      this.cktough = this.cktough ? this.cktough : require("tough-cookie");
+      this.ckjar = this.ckjar ? this.ckjar : new this.cktough.CookieJar();
+      if (opts) {
+        opts.headers = opts.headers ? opts.headers : {};
+        if (undefined === opts.headers.Cookie && undefined === opts.cookieJar) {
+          opts.cookieJar = this.ckjar;
+        }
+      }
+    }
+    get(opts, callback = () => {}) {
+      if (opts.headers) {
+        delete opts.headers["Content-Type"];
+        delete opts.headers["Content-Length"];
+      }
+      if (this.isSurge() || this.isLoon()) {
+        $httpClient.get(opts, (err, resp, body) => {
+          if (!err && resp) {
+            resp.body = body;
+            resp.statusCode = resp.status;
+          }
+          callback(err, resp, body);
         });
-      else if (this.isQuanX())
-        (t.method = "POST"),
-          $task.fetch(t).then(
-            t => {
-              const { statusCode: e, statusCode: i, headers: o, body: h } = t;
-              s(null, { status: e, statusCode: i, headers: o, body: h }, h);
-            },
-            t => s(t)
-          );
-      else if (this.isNode()) {
-        this.initGotEnv(t);
-        const { url: e, ...i } = t;
-        this.got.post(e, i).then(
-          t => {
-            const { statusCode: e, statusCode: i, headers: o, body: h } = t;
-            s(null, { status: e, statusCode: i, headers: o, body: h }, h);
+      } else if (this.isQuanX()) {
+        $task.fetch(opts).then(
+          resp => {
+            const { statusCode: status, statusCode, headers, body } = resp;
+            callback(null, { status, statusCode, headers, body }, body);
           },
-          t => s(t)
+          err => callback(err)
+        );
+      } else if (this.isNode()) {
+        this.initGotEnv(opts);
+        this.got(opts)
+          .on("redirect", (resp, nextOpts) => {
+            try {
+              const ck = resp.headers["set-cookie"]
+                .map(this.cktough.Cookie.parse)
+                .toString();
+              this.ckjar.setCookieSync(ck, null);
+              nextOpts.cookieJar = this.ckjar;
+            } catch (e) {
+              this.logErr(e);
+            }
+            // this.ckjar.setCookieSync(resp.headers['set-cookie'].map(Cookie.parse).toString())
+          })
+          .then(
+            resp => {
+              const { statusCode: status, statusCode, headers, body } = resp;
+              callback(null, { status, statusCode, headers, body }, body);
+            },
+            err => callback(err)
+          );
+      }
+    }
+    post(opts, callback = () => {}) {
+      // 如果指定了请求体, 但没指定`Content-Type`, 则自动生成
+      if (opts.body && opts.headers && !opts.headers["Content-Type"]) {
+        opts.headers["Content-Type"] = "application/x-www-form-urlencoded";
+      }
+      if (opts.headers) delete opts.headers["Content-Length"];
+      if (this.isSurge() || this.isLoon()) {
+        $httpClient.post(opts, (err, resp, body) => {
+          if (!err && resp) {
+            resp.body = body;
+            resp.statusCode = resp.status;
+          }
+          callback(err, resp, body);
+        });
+      } else if (this.isQuanX()) {
+        opts.method = "POST";
+        $task.fetch(opts).then(
+          resp => {
+            const { statusCode: status, statusCode, headers, body } = resp;
+            callback(null, { status, statusCode, headers, body }, body);
+          },
+          err => callback(err)
+        );
+      } else if (this.isNode()) {
+        this.initGotEnv(opts);
+        const { url, ..._opts } = opts;
+        this.got.post(url, _opts).then(
+          resp => {
+            const { statusCode: status, statusCode, headers, body } = resp;
+            callback(null, { status, statusCode, headers, body }, body);
+          },
+          err => callback(err)
         );
       }
     }
-    msg(s = t, e = "", i = "", o) {
-      const h = t =>
-        !t || (!this.isLoon() && this.isSurge())
-          ? t
-          : "string" == typeof t
-          ? this.isLoon()
-            ? t
-            : this.isQuanX()
-            ? { "open-url": t }
-            : void 0
-          : "object" == typeof t && (t["open-url"] || t["media-url"])
-          ? this.isLoon()
-            ? t["open-url"]
-            : this.isQuanX()
-            ? t
-            : void 0
-          : void 0;
-      this.isSurge() || this.isLoon()
-        ? $notification.post(s, e, i, h(o))
-        : this.isQuanX() && $notify(s, e, i, h(o)),
-        this.logs.push(
-          "",
-          "==============\ud83d\udce3\u7cfb\u7edf\u901a\u77e5\ud83d\udce3=============="
-        ),
-        this.logs.push(s),
-        e && this.logs.push(e),
-        i && this.logs.push(i);
+    /**
+     *
+     * 示例:$.time('yyyy-MM-dd qq HH:mm:ss.S')
+     *    :$.time('yyyyMMddHHmmssS')
+     *    y:年 M:月 d:日 q:季 H:时 m:分 s:秒 S:毫秒
+     *    其中y可选0-4位占位符、S可选0-1位占位符，其余可选0-2位占位符
+     * @param {*} fmt 格式化参数
+     *
+     */
+    time(fmt) {
+      let o = {
+        "M+": new Date().getMonth() + 1,
+        "d+": new Date().getDate(),
+        "H+": new Date().getHours(),
+        "m+": new Date().getMinutes(),
+        "s+": new Date().getSeconds(),
+        "q+": Math.floor((new Date().getMonth() + 3) / 3),
+        S: new Date().getMilliseconds()
+      };
+      if (/(y+)/.test(fmt))
+        fmt = fmt.replace(
+          RegExp.$1,
+          (new Date().getFullYear() + "").substr(4 - RegExp.$1.length)
+        );
+      for (let k in o)
+        if (new RegExp("(" + k + ")").test(fmt))
+          fmt = fmt.replace(
+            RegExp.$1,
+            RegExp.$1.length == 1
+              ? o[k]
+              : ("00" + o[k]).substr(("" + o[k]).length)
+          );
+      return fmt;
     }
-    log(...t) {
-      t.length > 0
-        ? (this.logs = [...this.logs, ...t])
-        : console.log(this.logs.join(this.logSeparator));
+    /**
+     * 系统通知
+     *
+     * > 通知参数: 同时支持 QuanX 和 Loon 两种格式, EnvJs根据运行环境自动转换, Surge 环境不支持多媒体通知
+     *
+     * 示例:
+     * $.msg(title, subt, desc, 'twitter://')
+     * $.msg(title, subt, desc, { 'open-url': 'twitter://', 'media-url': 'https://github.githubassets.com/images/modules/open_graph/github-mark.png' })
+     * $.msg(title, subt, desc, { 'open-url': 'https://bing.com', 'media-url': 'https://github.githubassets.com/images/modules/open_graph/github-mark.png' })
+     *
+     * @param {*} title 标题
+     * @param {*} subt 副标题
+     * @param {*} desc 通知详情
+     * @param {*} opts 通知参数
+     *
+     */
+    msg(title = name, subt = "", desc = "", opts) {
+      const toEnvOpts = rawopts => {
+        if (!rawopts || (!this.isLoon() && this.isSurge())) return rawopts;
+        if (typeof rawopts === "string") {
+          if (this.isLoon()) return rawopts;
+          else if (this.isQuanX()) return { "open-url": rawopts };
+          else return undefined;
+        } else if (
+          typeof rawopts === "object" &&
+          (rawopts["open-url"] || rawopts["media-url"])
+        ) {
+          if (this.isLoon()) return rawopts["open-url"];
+          else if (this.isQuanX()) return rawopts;
+          else undefined;
+        } else {
+          return undefined;
+        }
+      };
+      if (!this.isMute) {
+        if (this.isSurge() || this.isLoon()) {
+          $notification.post(title, subt, desc, toEnvOpts(opts));
+        } else if (this.isQuanX()) {
+          $notify(title, subt, desc, toEnvOpts(opts));
+        }
+      }
+      let logs = ["", "==============📣系统通知📣=============="];
+      logs.push(title);
+      subt ? logs.push(subt) : "";
+      desc ? logs.push(desc) : "";
+      console.log(logs.join("\n"));
+      this.logs = this.logs.concat(logs);
     }
-    logErr(t, s) {
-      const e = !this.isSurge() && !this.isQuanX() && !this.isLoon();
-      e
-        ? console.log("", `\u2757\ufe0f${this.name}, \u9519\u8bef!`, t.stack)
-        : console.log("", `\u2757\ufe0f${this.name}, \u9519\u8bef!`, t.message);
+    log(...logs) {
+      if (logs.length > 0) {
+        this.logs = [...this.logs, ...logs];
+      }
+      console.log(logs.join(this.logSeparator));
     }
-    wait(t) {
-      return new Promise(s => setTimeout(s, t));
+    logErr(err, msg) {
+      const isPrintSack = !this.isSurge() && !this.isQuanX() && !this.isLoon();
+      if (!isPrintSack) {
+        this.log("", `❗️${this.name}, 错误!`, err);
+      } else {
+        this.log("", `❗️${this.name}, 错误!`, err.stack);
+      }
     }
-    done(t = null) {
-      const s = new Date().getTime(),
-        e = (s - this.startTime) / 1e3;
-      this.log(
-        "",
-        `\ud83d\udd14${this.name}, \u7ed3\u675f! \ud83d\udd5b ${e} \u79d2`
-      ),
-        this.log(),
-        (this.isSurge() || this.isQuanX() || this.isLoon()) && $done(t);
+    wait(time) {
+      return new Promise(resolve => setTimeout(resolve, time));
     }
-  })(t, s);
+    done(val = {}) {
+      const endTime = new Date().getTime();
+      const costTime = (endTime - this.startTime) / 1000;
+      this.log("", `🔔${this.name}, 结束! 🕛 ${costTime} 秒`);
+      this.log();
+      if (this.isSurge() || this.isQuanX() || this.isLoon()) {
+        $done(val);
+      }
+    }
+  })(name, opts);
 }
