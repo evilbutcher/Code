@@ -33,7 +33,9 @@
 13、监控抖音视频关键词。  
 14、监控36氪关键词。  
 15、监控Kindle图书关键词。  
-16、监控RSSHub订阅。  
+16、监控RSSHub订阅，感谢@api-evangelist-[rss2json](https://github.com/api-evangelist/rss2json)。  
+17、监控人人影视最新上传，配合捷径[磁力离线](https://www.icloud.com/shortcuts/cfad8390798e459db458d6233d229209)可实现磁力下载，解锁追剧新姿势。  
+18、可自定关键词推送间隔。    
 
 ### [缩写翻译](https://github.com/evilbutcher/Code/blob/master/%E7%BC%A9%E5%86%99%E7%BF%BB%E8%AF%91/1.2%E7%BC%A9%E5%86%99%E7%BF%BB%E8%AF%91%E8%BE%93%E5%85%A5%E7%B2%98%E8%B4%B4%E5%B9%B6%E5%AD%98.js)
 #### 功能特点
