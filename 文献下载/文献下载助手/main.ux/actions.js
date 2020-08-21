@@ -410,7 +410,7 @@ function shtwdlrq(i, N, word) {
 function shimdlrq(i, N, word) {
   $http.request({
     method: "get",
-    url: "https://sci-hub.im/" + word,
+    url: "https://sci-hub.st/" + word,
     header: {
       host: "sci-hub.im"
     },
