@@ -12,7 +12,7 @@ module.exports = {
   rrnum: () => 6, //自定义人人影视显示数量
   rrrancolor: () => true, //是否开启人人影视随机颜色
   rsslink: () =>
-    "https://github.com/evilbutcher/Quantumult X/commits/master.atom", //👈就改引号里的链接。
+    "https://github.com/evilbutcher/Quantumult_X/commits/master.atom", //👈就改引号里的链接。
   rssnum: () => 6, //自定义RSS显示数量
   rssrancolor: () => true, //是否开启RSS随机颜色
   wbnum: () => 6, //自定义微博显示数量

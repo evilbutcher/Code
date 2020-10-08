@@ -18,7 +18,9 @@ const ERR = MYERR();
         cover = $.thisimglink2;
       } else {
         console.log(`${flag} 展示NASA图片`);
-        cover = imglink;
+        cover = imglink[0];
+        var title = imglink[1];
+        console.log(title);
       }
     } else {
       if (flag >= 0 && flag < 5) {
@@ -31,35 +33,54 @@ const ERR = MYERR();
     }
     $widget.setTimeline(ctx => {
       return {
-        type: "image",
-        props: {
-          uri: cover,
-          resizable: true,
-          scaledToFit: true,
-          frame: {
-            width: 400,
-            height: 400,
-            alignment: $widget.alignment.center
+        type: "zstack",
+        views: [
+          {
+            type: "image",
+            props: {
+              uri: cover,
+              resizable: true,
+              scaledToFit: true,
+              frame: {
+                width: 440,
+                height: 440,
+                alignment: $widget.alignment.center
+              },
+              clipped: true,
+              widgetURL: cover
+            }
+          },
+          {
+            type: "text",
+            props: {
+              text: title,
+              font: {
+                name: "Cochin-Italic",
+                size: 40
+              },
+              color: $color("white"),
+              lineLimit: 1
+            }
           }
-        }
+        ]
       };
     });
   }
-})()
-  .catch(err => {
-    if (err instanceof ERR.TokenError) {
-      $push.schedule({
-        title: "NASA - Config配置错误❌",
-        body: err.message
-      });
-    } else {
-      $push.schedule({
-        title: "NASA - 出现错误❌",
-        body: JSON.stringify(err)
-      });
-    }
-  })
-  .finally();
+})().catch(err => {
+  if (err instanceof ERR.TokenError) {
+    $push.schedule({
+      title: "NASA - Config配置错误❌",
+      body: err.message
+    });
+  } else if (err instanceof ERR.RequestError) {
+    console.log("NASA - 网络错误❌" + err.message);
+  } else {
+    $push.schedule({
+      title: "NASA - 出现错误❌",
+      body: err
+    });
+  }
+});
 
 function init() {
   try {
@@ -79,31 +100,29 @@ function MYERR() {
       this.name = "TokenError";
     }
   }
-  class TimeError extends Error {
+  class RequestError extends Error {
     constructor(message) {
       super(message);
-      this.name = "TimeError";
-    }
-  }
-  class ImageError extends Error {
-    constructor(message) {
-      super(message);
-      this.name = "ImageError";
+      this.name = "RequestError";
     }
   }
   return {
     TokenError,
-    TimeError,
-    ImageError
+    RequestError
   };
 }
 
 async function getinfo() {
   const url = `https://api.nasa.gov/planetary/apod?api_key=${$.thisapikey}`;
   var resp = await $http.get({
-    url: url
+    url: url,
+    timeout: 5
   });
   $.headers = resp.response;
+  if ($.headers == null) {
+    throw new ERR.RequestError("网络超时获取失败");
+  }
   var cover = resp.data.url;
-  return cover;
+  var title = resp.data.title;
+  return [cover, title];
 }
