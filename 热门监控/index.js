@@ -247,8 +247,12 @@ var checkrssresult = false;
     //deluselessck();
   }
 })()
-  .catch(e => {
-    $.log("", `❌失败! 原因: ${e}!`, "");
+  .catch(err => {
+    $.log(
+      "",
+      `❌失败! 原因: ${JSON.stringify(err, Object.getOwnPropertyNames(err))}!`,
+      ""
+    );
   })
   .finally(() => {
     $.done();
