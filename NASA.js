@@ -40,12 +40,7 @@ const ERR = MYERR();
             props: {
               uri: cover,
               resizable: true,
-              scaledToFit: true,
-              frame: {
-                width: 440,
-                height: 440,
-                alignment: $widget.alignment.center
-              },
+              scaledToFill: true,
               clipped: true,
               widgetURL: cover
             }
@@ -56,7 +51,7 @@ const ERR = MYERR();
               text: title,
               font: {
                 name: "Cochin-Italic",
-                size: 40
+                size: 20
               },
               color: $color("white"),
               lineLimit: 1
@@ -77,7 +72,7 @@ const ERR = MYERR();
   } else {
     $push.schedule({
       title: "NASA - 出现错误❌",
-      body: err
+      body: JSON.stringify(err, Object.getOwnPropertyNames(err))
     });
   }
 });
@@ -116,7 +111,7 @@ async function getinfo() {
   const url = `https://api.nasa.gov/planetary/apod?api_key=${$.thisapikey}`;
   var resp = await $http.get({
     url: url,
-    timeout: 5
+    timeout: 8
   });
   $.headers = resp.response;
   if ($.headers == null) {
