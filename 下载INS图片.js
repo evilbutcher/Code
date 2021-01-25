@@ -1,13 +1,4 @@
 var L = $clipboard.text;
-//if (typeof $cache.get("logged") == "undefined") {
-//  $cache.set("logged", false);
-//}
-//if ($cache.get("logged") == false) {
-//  $safari.open({
-//    url: L
-//  });
-//}
-//$cache.set("logged", true);
 
 $input.text({
   type: $kbType.text,
@@ -47,10 +38,6 @@ $input.text({
             });
           }
         });
-//        if (imglink == undefined) {
-//          $cache.set("logged", false);
-//        }
-//        $ui.alert("请重新运行脚本以登录");
       }
     });
   }
