@@ -1,3 +1,4 @@
+//直接复制求助短信，运行脚本即可使用
 var text = $clipboard.text;
 if (text != undefined) {
   var getw = /北纬\:\d+\°\d+\′\d+\.\d+″/;
