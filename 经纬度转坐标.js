@@ -18,7 +18,6 @@ if (text != undefined) {
     var ns = JSON.stringify(prens).slice(3, -3);
     var n = parseFloat(nd) + parseFloat(nm) / 60 + parseFloat(ns) / 3600;
     console.log(n);
-    var preed = JSON.stringify(pree).match(getwd);
     var preed = JSON.stringify(pree).match(geted);
     var ed = JSON.stringify(preed).slice(5, -3);
     var preem = JSON.stringify(pree).match(getm);
